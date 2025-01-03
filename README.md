@@ -35,11 +35,13 @@ report = diff_dicts(dev_config, prod_config)
 
 ## API
 
-- `diff_files(left, right, include=None, exclude=None)` — Compare config files
-- `diff_dicts(left, right, include=None, exclude=None)` — Compare dicts
-- `report.changes` — List of `Change` objects
-- `report.added` / `report.removed` / `report.modified` — Filtered changes
-- `report.summary()` — Change count summary
+| Function / Class | Description |
+|---|---|
+| `diff_files(left, right, include=None, exclude=None)` | Compare config files |
+| `diff_dicts(left, right, include=None, exclude=None)` | Compare dicts |
+| `report.changes` | List of `Change` objects |
+| `report.added` / `report.removed` / `report.modified` | Filtered changes |
+| `report.summary()` | Change count summary |
 
 ## Development
 
