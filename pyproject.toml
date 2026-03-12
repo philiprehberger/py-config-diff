@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "philiprehberger-config-diff"
-version = "0.1.0"
+version = "0.1.1"
 description = "Compare configuration files across environments"
 readme = "README.md"
 license = "MIT"
@@ -24,9 +24,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/philiprehberger/py-config-diff"
+Homepage = "https://github.com/philiprehberger/py-config-diff#readme"
 Repository = "https://github.com/philiprehberger/py-config-diff"
 Issues = "https://github.com/philiprehberger/py-config-diff/issues"
+Changelog = "https://github.com/philiprehberger/py-config-diff/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/philiprehberger_config_diff"]
