@@ -41,6 +41,14 @@ report = diff_dicts(dev_config, prod_config)
 - `report.added` / `report.removed` / `report.modified` — Filtered changes
 - `report.summary()` — Change count summary
 
+
+## Development
+
+```bash
+pip install -e .
+python -m pytest tests/ -v
+```
+
 ## License
 
 MIT
