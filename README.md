@@ -1,5 +1,9 @@
 # philiprehberger-config-diff
 
+[![Tests](https://github.com/philiprehberger/py-config-diff/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-config-diff/actions/workflows/publish.yml)
+[![PyPI version](https://img.shields.io/pypi/v/philiprehberger-config-diff.svg)](https://pypi.org/project/philiprehberger-config-diff/)
+[![License](https://img.shields.io/github/license/philiprehberger/py-config-diff)](LICENSE)
+
 Compare configuration files across environments.
 
 ## Installation
