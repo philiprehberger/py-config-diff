@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "philiprehberger-config-diff"
-version = "0.1.4"
+version = "0.1.5"
 description = "Compare configuration files across environments"
 readme = "README.md"
 license = "MIT"
@@ -31,3 +31,9 @@ Changelog = "https://github.com/philiprehberger/py-config-diff/blob/main/CHANGEL
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/philiprehberger_config_diff"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
