@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "philiprehberger-config-diff"
-version = "0.1.5"
+version = "0.1.6"
 description = "Compare configuration files across environments"
 readme = "README.md"
 license = "MIT"
