@@ -2,8 +2,7 @@
 
 [![Tests](https://github.com/philiprehberger/py-config-diff/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-config-diff/actions/workflows/publish.yml)
 [![PyPI version](https://img.shields.io/pypi/v/philiprehberger-config-diff.svg)](https://pypi.org/project/philiprehberger-config-diff/)
-[![License](https://img.shields.io/github/license/philiprehberger/py-config-diff)](LICENSE)
-[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
+[![Last updated](https://img.shields.io/github/last-commit/philiprehberger/py-config-diff)](https://github.com/philiprehberger/py-config-diff/commits/main)
 
 Compare configuration files across environments.
 
@@ -42,7 +41,6 @@ report = diff_dicts(dev_config, prod_config)
 - `report.added` / `report.removed` / `report.modified` — Filtered changes
 - `report.summary()` — Change count summary
 
-
 ## Development
 
 ```bash
@@ -50,6 +48,24 @@ pip install -e .
 python -m pytest tests/ -v
 ```
 
+## Support
+
+If you find this project useful:
+
+⭐ [Star the repo](https://github.com/philiprehberger/py-config-diff)
+
+🐛 [Report issues](https://github.com/philiprehberger/py-config-diff/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+
+💡 [Suggest features](https://github.com/philiprehberger/py-config-diff/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+
+❤️ [Sponsor development](https://github.com/sponsors/philiprehberger)
+
+🌐 [All Open Source Projects](https://philiprehberger.com/open-source-packages)
+
+💻 [GitHub Profile](https://github.com/philiprehberger)
+
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/philiprehberger)
+
 ## License
 
-MIT
+[MIT](LICENSE)
