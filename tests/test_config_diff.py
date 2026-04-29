@@ -2,7 +2,12 @@ import json
 import tempfile
 from pathlib import Path
 
-from philiprehberger_config_diff import diff_files, diff_dicts, ChangeType
+from philiprehberger_config_diff import (
+    ChangeType,
+    diff_dicts,
+    diff_files,
+    unified_diff,
+)
 
 
 def test_no_changes():
@@ -94,3 +99,35 @@ def test_change_str():
 def test_empty_dicts():
     report = diff_dicts({}, {})
     assert not report.has_changes
+
+
+def test_unified_diff_identical_returns_empty():
+    assert unified_diff({"a": 1}, {"a": 1}) == ""
+
+
+def test_unified_diff_renders_change():
+    out = unified_diff({"a": 1, "b": 2}, {"a": 1, "b": 3})
+    assert "--- left" in out
+    assert "+++ right" in out
+    assert "-b = 2" in out
+    assert "+b = 3" in out
+
+
+def test_unified_diff_nested():
+    left = {"db": {"host": "localhost", "port": 5432}}
+    right = {"db": {"host": "remote", "port": 5432}}
+    out = unified_diff(left, right)
+    assert "-db.host = 'localhost'" in out
+    assert "+db.host = 'remote'" in out
+
+
+def test_unified_diff_custom_labels():
+    out = unified_diff({"a": 1}, {"a": 2}, left_label="dev", right_label="prod")
+    assert "--- dev" in out
+    assert "+++ prod" in out
+
+
+def test_change_type_enum():
+    assert ChangeType.ADDED.value == "added"
+    assert ChangeType.REMOVED.value == "removed"
+    assert ChangeType.MODIFIED.value == "modified"

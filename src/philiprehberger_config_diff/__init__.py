@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import configparser
+import difflib
 import json
 import re
 from dataclasses import dataclass, field
@@ -15,6 +16,7 @@ from typing import Any
 __all__ = [
     "diff_files",
     "diff_dicts",
+    "unified_diff",
     "DiffReport",
     "Change",
     "ChangeType",
@@ -133,6 +135,53 @@ def diff_dicts(
         changes = _filter_changes(changes, include, exclude)
 
     return DiffReport(changes=changes)
+
+
+def unified_diff(
+    left: dict[str, Any],
+    right: dict[str, Any],
+    *,
+    context: int = 3,
+    left_label: str = "left",
+    right_label: str = "right",
+) -> str:
+    """Render a traditional ``diff -u`` style string for two dicts.
+
+    Each leaf key/value is rendered as ``key.path = value`` on its own line and
+    diffed via :func:`difflib.unified_diff`. Useful for printing config diffs
+    in a familiar, copy-pastable format.
+
+    Args:
+        left: First dict.
+        right: Second dict.
+        context: Number of context lines around each change.
+        left_label: Header label for the "from" side.
+        right_label: Header label for the "to" side.
+
+    Returns:
+        A multiline string. Empty if the configs are identical.
+    """
+    left_lines = _flatten_for_diff(left)
+    right_lines = _flatten_for_diff(right)
+    diff = difflib.unified_diff(
+        left_lines,
+        right_lines,
+        fromfile=left_label,
+        tofile=right_label,
+        n=context,
+        lineterm="",
+    )
+    return "\n".join(diff)
+
+
+def _flatten_for_diff(data: Any, prefix: str = "") -> list[str]:
+    if isinstance(data, dict):
+        lines: list[str] = []
+        for key in sorted(data):
+            path = f"{prefix}.{key}" if prefix else key
+            lines.extend(_flatten_for_diff(data[key], path))
+        return lines
+    return [f"{prefix} = {data!r}"]
 
 
 def _diff_recursive(

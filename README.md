@@ -33,12 +33,30 @@ report = diff_files("dev.env", "prod.env", include=["DB_*"])
 report = diff_dicts(dev_config, prod_config)
 ```
 
+### Unified diff output
+
+```python
+from philiprehberger_config_diff import unified_diff
+
+dev = {"db": {"host": "localhost", "port": 5432}}
+prod = {"db": {"host": "prod-server", "port": 5432}}
+
+print(unified_diff(dev, prod, left_label="dev", right_label="prod"))
+# --- dev
+# +++ prod
+# @@ -1,2 +1,2 @@
+# -db.host = 'localhost'
+# +db.host = 'prod-server'
+#  db.port = 5432
+```
+
 ## API
 
 | Function / Class | Description |
 |---|---|
 | `diff_files(left, right, include=None, exclude=None)` | Compare config files |
 | `diff_dicts(left, right, include=None, exclude=None)` | Compare dicts |
+| `unified_diff(left, right, *, context=3, left_label, right_label)` | Render `diff -u` style output |
 | `report.changes` | List of `Change` objects |
 | `report.added` / `report.removed` / `report.modified` | Filtered changes |
 | `report.summary()` | Change count summary |
