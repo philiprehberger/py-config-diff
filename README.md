@@ -4,6 +4,8 @@
 [![PyPI version](https://img.shields.io/pypi/v/philiprehberger-config-diff.svg)](https://pypi.org/project/philiprehberger-config-diff/)
 [![Last updated](https://img.shields.io/github/last-commit/philiprehberger/py-config-diff)](https://github.com/philiprehberger/py-config-diff/commits/main)
 
+![philiprehberger-config-diff](https://raw.githubusercontent.com/philiprehberger/py-config-diff/main/package-card.webp)
+
 Compare configuration files across environments.
 
 ## Installation
@@ -31,6 +33,21 @@ report = diff_files("dev.env", "prod.env", include=["DB_*"])
 
 # Compare dicts directly
 report = diff_dicts(dev_config, prod_config)
+```
+
+### Regex filter patterns
+
+`include` and `exclude` accept compiled `re.Pattern` objects alongside glob strings, which is handy for redacting secret keys by suffix or prefix.
+
+```python
+import re
+from philiprehberger_config_diff import diff_dicts
+
+report = diff_dicts(
+    dev_config,
+    prod_config,
+    exclude=[re.compile(r".*_token$"), re.compile(r"^secret\.")],
+)
 ```
 
 ### Unified diff output

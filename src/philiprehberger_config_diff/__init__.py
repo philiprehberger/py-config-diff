@@ -89,8 +89,8 @@ def diff_files(
     left_path: str,
     right_path: str,
     *,
-    include: list[str] | None = None,
-    exclude: list[str] | None = None,
+    include: list[str | re.Pattern[str]] | None = None,
+    exclude: list[str | re.Pattern[str]] | None = None,
 ) -> DiffReport:
     """Compare two configuration files.
 
@@ -99,8 +99,9 @@ def diff_files(
     Args:
         left_path: Path to the first config file.
         right_path: Path to the second config file.
-        include: Glob patterns for keys to include.
-        exclude: Glob patterns for keys to exclude.
+        include: Glob patterns or compiled regexes for keys to include.
+        exclude: Glob patterns or compiled regexes for keys to exclude. Useful
+            for filtering secret keys (e.g., ``re.compile(r".*_token$")``).
 
     Returns:
         DiffReport with all changes.
@@ -114,16 +115,16 @@ def diff_dicts(
     left: dict[str, Any],
     right: dict[str, Any],
     *,
-    include: list[str] | None = None,
-    exclude: list[str] | None = None,
+    include: list[str | re.Pattern[str]] | None = None,
+    exclude: list[str | re.Pattern[str]] | None = None,
 ) -> DiffReport:
     """Compare two dictionaries and report differences.
 
     Args:
         left: First dict.
         right: Second dict.
-        include: Glob patterns for keys to include.
-        exclude: Glob patterns for keys to exclude.
+        include: Glob patterns or compiled regexes for keys to include.
+        exclude: Glob patterns or compiled regexes for keys to exclude.
 
     Returns:
         DiffReport with all changes.
@@ -204,16 +205,27 @@ def _diff_recursive(
         changes.append(Change(ChangeType.MODIFIED, prefix, left=left, right=right))
 
 
+def _matches(path: str, pattern: str | re.Pattern[str]) -> bool:
+    """Match ``path`` against a glob string or a compiled regex.
+
+    Compiled ``re.Pattern`` objects match via ``search()``; glob strings use
+    ``fnmatch`` for backwards compatibility.
+    """
+    if isinstance(pattern, re.Pattern):
+        return pattern.search(path) is not None
+    return fnmatch(path, pattern)
+
+
 def _filter_changes(
     changes: list[Change],
-    include: list[str] | None,
-    exclude: list[str] | None,
+    include: list[str | re.Pattern[str]] | None,
+    exclude: list[str | re.Pattern[str]] | None,
 ) -> list[Change]:
     result = changes
     if include:
-        result = [c for c in result if any(fnmatch(c.path, p) for p in include)]
+        result = [c for c in result if any(_matches(c.path, p) for p in include)]
     if exclude:
-        result = [c for c in result if not any(fnmatch(c.path, p) for p in exclude)]
+        result = [c for c in result if not any(_matches(c.path, p) for p in exclude)]
     return result
 
 

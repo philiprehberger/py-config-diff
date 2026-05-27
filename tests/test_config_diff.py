@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 from pathlib import Path
 
@@ -131,3 +132,35 @@ def test_change_type_enum():
     assert ChangeType.ADDED.value == "added"
     assert ChangeType.REMOVED.value == "removed"
     assert ChangeType.MODIFIED.value == "modified"
+
+
+def test_exclude_with_compiled_regex():
+    left = {"db": {"host": "old", "password": "pw1"}, "api_token": "t1"}
+    right = {"db": {"host": "new", "password": "pw2"}, "api_token": "t2"}
+
+    report = diff_dicts(
+        left,
+        right,
+        exclude=[re.compile(r"password$"), re.compile(r"_token$")],
+    )
+
+    assert [c.path for c in report.changes] == ["db.host"]
+
+
+def test_include_with_compiled_regex():
+    left = {"db_host": "a", "db_port": 1, "api_host": "x"}
+    right = {"db_host": "b", "db_port": 2, "api_host": "y"}
+
+    report = diff_dicts(left, right, include=[re.compile(r"^db_")])
+
+    paths = sorted(c.path for c in report.changes)
+    assert paths == ["db_host", "db_port"]
+
+
+def test_glob_and_regex_can_mix():
+    left = {"a": 1, "b": 2, "c_token": "x"}
+    right = {"a": 10, "b": 20, "c_token": "y"}
+
+    report = diff_dicts(left, right, exclude=["a", re.compile(r"_token$")])
+
+    assert [c.path for c in report.changes] == ["b"]
