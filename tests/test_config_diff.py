@@ -5,6 +5,7 @@ from pathlib import Path
 
 from philiprehberger_config_diff import (
     ChangeType,
+    DiffReport,
     diff_dicts,
     diff_files,
     unified_diff,
@@ -164,3 +165,54 @@ def test_glob_and_regex_can_mix():
     report = diff_dicts(left, right, exclude=["a", re.compile(r"_token$")])
 
     assert [c.path for c in report.changes] == ["b"]
+
+
+def test_is_empty_true_for_default_report():
+    assert DiffReport().is_empty() is True
+
+
+def test_is_empty_true_for_identical_dicts():
+    assert diff_dicts({"a": 1}, {"a": 1}).is_empty() is True
+
+
+def test_is_empty_false_after_changes():
+    report = diff_dicts({"a": 1}, {"a": 2})
+    assert report.is_empty() is False
+
+
+def test_to_dict_empty_report():
+    assert DiffReport().to_dict() == {"changes": []}
+
+
+def test_to_dict_single_change_shape():
+    report = diff_dicts({"a": 1}, {"a": 2})
+    result = report.to_dict()
+    assert isinstance(result["changes"], list)
+    assert len(result["changes"]) == 1
+    entry = result["changes"][0]
+    assert set(entry.keys()) == {"path", "type", "old", "new"}
+    assert entry["path"] == "a"
+    assert entry["type"] == "modified"
+    assert entry["old"] == 1
+    assert entry["new"] == 2
+
+
+def test_to_dict_added_and_removed_shape():
+    report = diff_dicts({"a": 1}, {"b": 2})
+    entries = {e["path"]: e for e in report.to_dict()["changes"]}
+    assert entries["a"]["type"] == "removed"
+    assert entries["a"]["old"] == 1
+    assert entries["a"]["new"] is None
+    assert entries["b"]["type"] == "added"
+    assert entries["b"]["old"] is None
+    assert entries["b"]["new"] == 2
+
+
+def test_to_dict_is_json_serializable():
+    report = diff_dicts(
+        {"a": 1, "db": {"host": "localhost"}},
+        {"a": 2, "db": {"host": "remote"}, "extra": True},
+    )
+    # Must not raise.
+    payload = json.dumps(report.to_dict())
+    assert "changes" in json.loads(payload)

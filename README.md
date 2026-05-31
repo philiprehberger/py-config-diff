@@ -50,6 +50,29 @@ report = diff_dicts(
 )
 ```
 
+### Serializing diffs
+
+`DiffReport.to_dict()` returns a JSON-serializable representation, and
+`DiffReport.is_empty()` is a quick check for "no changes" in scripts or CI gates.
+
+```python
+import json
+from philiprehberger_config_diff import diff_dicts
+
+report = diff_dicts({"a": 1}, {"a": 2, "b": 3})
+
+if report.is_empty():
+    print("No drift detected")
+else:
+    print(json.dumps(report.to_dict(), indent=2))
+    # {
+    #   "changes": [
+    #     {"path": "a", "type": "modified", "old": 1, "new": 2},
+    #     {"path": "b", "type": "added", "old": null, "new": 3}
+    #   ]
+    # }
+```
+
 ### Unified diff output
 
 ```python
@@ -77,6 +100,8 @@ print(unified_diff(dev, prod, left_label="dev", right_label="prod"))
 | `report.changes` | List of `Change` objects |
 | `report.added` / `report.removed` / `report.modified` | Filtered changes |
 | `report.summary()` | Change count summary |
+| `report.is_empty()` | `True` when the report contains no changes |
+| `report.to_dict()` | JSON-serializable `{"changes": [...]}` representation |
 
 ## Development
 

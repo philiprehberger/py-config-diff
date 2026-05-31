@@ -77,6 +77,34 @@ class DiffReport:
             f"Modified: {len(self.modified)}"
         )
 
+    def is_empty(self) -> bool:
+        """Return True when the report contains no changes."""
+        return len(self.changes) == 0
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return a JSON-serializable dict representation.
+
+        Each ``Change`` is rendered as ``{"path", "type", "old", "new"}`` where
+        ``type`` uses the ``ChangeType.value`` string (e.g., ``"added"``) for
+        stability across renames, and ``old`` / ``new`` map to the ``Change``'s
+        ``left`` / ``right`` values.
+
+        Format::
+
+            {"changes": [{"path": str, "type": str, "old": Any, "new": Any}, ...]}
+        """
+        return {
+            "changes": [
+                {
+                    "path": c.path,
+                    "type": c.type.value,
+                    "old": c.left,
+                    "new": c.right,
+                }
+                for c in self.changes
+            ],
+        }
+
     def __str__(self) -> str:
         if not self.changes:
             return "No differences"

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2026-05-30)
+
+- Add `DiffReport.to_dict()` for JSON-serializable output
+- Add `DiffReport.is_empty()` for quick "no changes" checks
+
 ## 0.3.0 (2026-05-26)
 
 - `include` and `exclude` now accept compiled `re.Pattern` objects alongside glob strings — useful for redacting secret keys by regex (e.g., `re.compile(r".*_token$")`)
